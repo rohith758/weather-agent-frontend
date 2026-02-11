@@ -70,9 +70,13 @@ function App() {
     }
   };
 
-  const handleExit = async () => {
+const handleExit = async () => {
+    // 1. Define the base URL using the environment variable you set in Vercel
+    const API_BASE_URL = import.meta.env.VITE_API_URL || '';
+
     try {
-      const response = await fetch('/api/summary', {
+      // 2. Use the full URL instead of a relative path
+      const response = await fetch(`${API_BASE_URL}/api/summary`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ messages }),
@@ -80,6 +84,10 @@ function App() {
       
       if (response.ok) {
         setIsExited(true);
+      } else {
+        // Handle case where server responds but with an error
+        console.error("Server responded with an error");
+        setIsExited(true); 
       }
     } catch (error) {
       console.error("Failed to save summary:", error);
