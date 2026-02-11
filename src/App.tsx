@@ -28,6 +28,9 @@ function App() {
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
+  // Define the base URL once at the top of the component
+  const API_BASE_URL = import.meta.env.VITE_API_URL || '';
+
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
@@ -45,7 +48,8 @@ function App() {
     setIsLoading(true);
 
     try {
-      const response = await fetch('/api/chat', { 
+      // FIX: Use the full URL for the chat endpoint
+      const response = await fetch(`${API_BASE_URL}/api/chat`, { 
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query: userMessage.content }),
@@ -70,12 +74,9 @@ function App() {
     }
   };
 
-const handleExit = async () => {
-    // 1. Define the base URL using the environment variable you set in Vercel
-    const API_BASE_URL = import.meta.env.VITE_API_URL || '';
-
+  const handleExit = async () => {
     try {
-      // 2. Use the full URL instead of a relative path
+      // FIX: Use the full URL for the summary endpoint
       const response = await fetch(`${API_BASE_URL}/api/summary`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -85,7 +86,6 @@ const handleExit = async () => {
       if (response.ok) {
         setIsExited(true);
       } else {
-        // Handle case where server responds but with an error
         console.error("Server responded with an error");
         setIsExited(true); 
       }
@@ -96,7 +96,6 @@ const handleExit = async () => {
     }
   };
 
-  // Switch to Summary/Exit Screen
   if (isExited) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-slate-100 p-4">
@@ -123,7 +122,6 @@ const handleExit = async () => {
     <div className="flex items-center justify-center min-h-screen bg-slate-50 p-4">
       <Card className="w-full max-w-2xl h-[700px] flex flex-col shadow-2xl border-none">
         
-        {/* Header */}
         <CardHeader className="border-b bg-white rounded-t-xl py-4 flex flex-row items-center justify-between">
           <CardTitle className="flex items-center gap-3 text-blue-600 font-bold">
             <div className="p-2 bg-blue-50 rounded-lg">
@@ -141,7 +139,6 @@ const handleExit = async () => {
           </Button>
         </CardHeader>
 
-        {/* Chat Area */}
         <ScrollArea className="flex-1 p-4 bg-slate-50/50">
           <div className="space-y-6">
             {messages.map((msg) => (
@@ -175,7 +172,6 @@ const handleExit = async () => {
           </div>
         </ScrollArea>
 
-        {/* Input Area */}
         <CardFooter className="p-4 bg-white border-t rounded-b-xl">
           <form 
             className="flex w-full gap-3"
